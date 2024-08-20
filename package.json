@@ -5,7 +5,24 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pm2:start": "pm2 start index.js --name Medme --watch",
+    "pm2:stop": "pm2 stop Medme",
+    "pm2:delete": "pm2 delete Medme",
+    "pm2:logs": "pm2 logs Medme",
+    "pm2:status": "pm2 status Medme",
+    "pm2:restart": "pm2 restart Medme",
+    "pm2:save": "pm2 save",
+    "pm2:startup": "pm2 startup",
+    "pm2:unstartup": "pm2 unstartup",
+    "pm2:dump": "pm2 dump",
+    "pm2:reload": "pm2 reload Medme",
+    "pm2:reset": "pm2 reset Medme",
+    "pm2:describe": "pm2 describe Medme",
+    "pm2:monit": "pm2 monit",
+    "pm2:prettylist": "pm2 prettylist",
+    "pm2:prettydump": "pm2 prettydump",
+    "pm2:prettyprint": "pm2 prettyprint"
+
   },
   "keywords": [],
   "author": "",
