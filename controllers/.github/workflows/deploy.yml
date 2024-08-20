@@ -1,0 +1,45 @@
+name: Deploy to Ubuntu Server on push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -H 37.60.253.214 >> ~/.ssh/known_hosts
+
+      - name: Ensure directory exists and sync files
+        run: |
+          ssh root@37.60.253.214 "mkdir -p /root/app/bot/Medme"
+          rsync -avz ./ root@37.60.253.214:/root/app/bot/Medme
+
+      - name: Install dependencies
+        run: ssh root@37.60.253.214 "cd /root/app/bot/Medme && npm install"
+
+      - name: Check and restart or start pm2 process
+        run: |
+          ssh root@37.60.253.214 << 'EOF'
+            cd /root/app/bot/Medme
+            npm run pm2:status
+            if pm2 list | grep -q Medme; then
+                npm run pm2:restart
+            else 
+                npm run pm2:start
+            fi
+          EOF
+
+      - name: Append NODE_ENV to .env file
+        run: ssh root@37.60.253.214 "echo 'NODE_ENV=production' >> /root/app/bot/Medme/.env"
